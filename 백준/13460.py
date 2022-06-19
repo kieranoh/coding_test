@@ -13,63 +13,53 @@ dx = [-1,1,0,0]
 dy = [0,0,1,-1]
 queue = []
 visited = []
-ans = -1
-queue.append((rx,ry,bx,by,0))
+queue.append((rx,ry,bx,by,1))
 visited.append((rx,ry,bx,by))
 def bfs():
-    global queue, visited, ans
+    global ans, queue, visited
     while queue:
         
         rx,ry,bx,by,cnt = queue.pop(0)
 
-        if cnt == 10:
-            ans = -1
-            return      
+        if cnt > 10:
+            ans  = -1
+            break     
             
 
         for i in range(4):
-            nrx,nry = rx,ry
 
-            while True:
+            nrx,nry = rx,ry
+            rcnt, bcnt = 0 , 0
+            while  table[nrx + dx[i]][nry+ dy[i]] != '#' and table[nrx][nry] != 'O':
                 nrx += dx[i]
                 nry += dy[i]
-
-                if table[nrx][nry] == '#':
-                    nrx -= dx[i]
-                    nry -= dy[i]
-                    break
-
-                if table[nrx][nry] == 'O':
-                    break
+                rcnt += 1
 
             nbx,nby = bx,by
-
-            while True:
+            while table[nbx + dx[i]][nby+ dy[i]] != '#' and table[nbx][nby] != 'O':
                 nbx += dx[i]
                 nby += dy[i]
-                if table[nbx][nby] == '#':
-                    nbx -= dx[i]
-                    nby -= dy[i]
-                    break
+                bcnt += 1
+                
 
-                if table[nbx][nby] == 'O':
-                    break
             if table[nbx][nby] != 'O':
                 if table[nrx][nry] == 'O':
                     ans = cnt
                     return
                 if nrx == nbx and nry == nby:
-                    if abs(nrx-rx) + abs(nry - ry) > abs(nbx - bx) + abs(nby - by):
+                    if rcnt < bcnt:
                         nbx -= dx[i]
                         nby -= dy[i]
                 
                     else:
                         nrx -= dx[i]
-                        nby -= dy[i]
+                        nry -= dy[i]
 
-            if (nrx,nry,nbx,nby) not in visited:
-                queue.append((nrx,nry,nbx,nby,cnt+1))
-                visited.append((nrx,nry,nbx,nby))
+                if (nrx,nry,nbx,nby) not in visited:
+                    queue.append((nrx,nry,nbx,nby,cnt+1))
+                    visited.append((nrx,nry,nbx,nby))
+                    
+    ans = -1
 
 bfs()
 print(ans)
